@@ -1,0 +1,44 @@
+name: 24/7 Coding Agent
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # 30분마다 실행
+  issues:
+    types: [opened, reopened] # 이슈 열리면 즉시 트리거
+  workflow_dispatch:           # 수동 실행
+
+jobs:
+  agent:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install requests pytest
+
+      - name: Run background agent
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_REPO: ${{ github.repository }}
+          AGENT_WORKERS: "3"
+        run: python agent/background_agent.py
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-logs-${{ github.run_number }}
+          path: logs/
+          retention-days: 7
