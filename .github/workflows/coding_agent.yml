@@ -30,7 +30,7 @@ jobs:
       - name: Run background agent
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          UPSTAGE_API_KEY: ${{ secrets.UPSTAGE_API_KEY }}
           GITHUB_REPO: ${{ github.repository }}
           AGENT_WORKERS: "3"
         run: python agent/background_agent.py

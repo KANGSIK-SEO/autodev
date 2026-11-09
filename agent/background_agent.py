@@ -18,7 +18,7 @@ import requests
 # ── 설정 ─────────────────────────────────────────────────────────────────────
 
 GITHUB_TOKEN   = os.environ.get("GITHUB_TOKEN", "")
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+UPSTAGE_API_KEY = os.environ.get("UPSTAGE_API_KEY", "")
 REPO           = os.environ.get("GITHUB_REPO", "KANGSIK-SEO/autodev")
 MAX_WORKERS    = int(os.environ.get("AGENT_WORKERS", "3"))  # 병렬 이슈 처리 수
 MAX_RETRIES    = 2                                           # 테스트 실패 시 재시도
@@ -277,9 +277,9 @@ def _push_file(branch: str, filepath: str, content: str, message: str):
 
 def _llm(prompt: str, temperature: float = 0.2) -> str:
     r = requests.post(
-        "https://api.openai.com/v1/chat/completions",
-        headers={"Authorization": f"Bearer {OPENAI_API_KEY}"},
-        json={"model": "gpt-4o-mini",
+        "https://api.upstage.ai/v1/chat/completions",  # Upstage Solar endpoint
+        headers={"Authorization": f"Bearer {UPSTAGE_API_KEY}"},
+        json={"model": "solar-pro4",                   # 코딩+에이전트 최적화 모델
               "messages": [{"role": "user", "content": prompt}],
               "temperature": temperature},
         timeout=90,
